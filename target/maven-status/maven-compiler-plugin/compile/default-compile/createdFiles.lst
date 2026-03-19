@@ -5,6 +5,7 @@ com/tharsis/jakartaapp/service/CustomerService.class
 com/tharsis/jakartaapp/entity/Customer.class
 com/tharsis/jakartaapp/config/CorsFilter.class
 com/tharsis/jakartaapp/dto/CustomerDTO.class
+com/tharsis/jakartaapp/repository/GenericRepository.class
 com/tharsis/jakartaapp/exception/ExceptionMapper.class
 com/tharsis/jakartaapp/repository/CustomerRepository.class
 com/tharsis/jakartaapp/resource/CustomerResource.class
@@ -12,5 +13,6 @@ com/tharsis/jakartaapp/exception/BusinessException.class
 com/tharsis/jakartaapp/service/InvoiceService.class
 com/tharsis/jakartaapp/config/JaxRsConfig.class
 com/tharsis/jakartaapp/resource/InvoiceResource.class
+com/tharsis/jakartaapp/resource/CustomerResource$ErrorResponse.class
 com/tharsis/jakartaapp/repository/InvoiceRepository.class
 com/tharsis/jakartaapp/entity/Invoice$InvoiceStatus.class
