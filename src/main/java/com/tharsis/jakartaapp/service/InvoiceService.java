@@ -3,84 +3,152 @@ package com.tharsis.jakartaapp.service;
 import com.tharsis.jakartaapp.dto.InvoiceDTO;
 import com.tharsis.jakartaapp.entity.Customer;
 import com.tharsis.jakartaapp.entity.Invoice;
-import com.tharsis.jakartaapp.exception.BusinessException;
 import com.tharsis.jakartaapp.repository.CustomerRepository;
 import com.tharsis.jakartaapp.repository.InvoiceRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service para Invoice - Business Logic Layer
+ */
 @ApplicationScoped
 public class InvoiceService {
 
     @Inject
-    private InvoiceRepository repository;
+    private InvoiceRepository invoiceRepository;
 
     @Inject
     private CustomerRepository customerRepository;
 
+    @Transactional
+    public InvoiceDTO create(InvoiceDTO dto) {
+        // Validar se customer existe
+        Customer customer = customerRepository.findById(dto.getCustomerId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                    "Customer não encontrado: " + dto.getCustomerId()));
+
+        Invoice invoice = new Invoice();
+        invoice.setAmount(dto.getAmount());
+        invoice.setDescription(dto.getDescription());
+        invoice.setDueDate(dto.getDueDate());
+        invoice.setCustomer(customer);
+
+        // O número é gerado automaticamente no @PrePersist da entidade
+
+        invoice = invoiceRepository.save(invoice);
+
+        return toDTO(invoice);
+    }
+
+    public Optional<InvoiceDTO> findById(Long id) {
+        return invoiceRepository.findById(id)
+                .map(this::toDTO);
+    }
+
     public List<InvoiceDTO> findAll() {
-        return repository.findAll().stream()
+        return invoiceRepository.findAll()
+                .stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public InvoiceDTO findById(Long id) {
-        return repository.findById(id)
+    public List<InvoiceDTO> findByCustomerId(Long customerId) {
+        return invoiceRepository.findByCustomerId(customerId)
+                .stream()
                 .map(this::toDTO)
-                .orElseThrow(() -> new BusinessException("Invoice not found: " + id));
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public InvoiceDTO create(InvoiceDTO dto) {
-        Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new BusinessException("Customer not found: " + dto.getCustomerId()));
-        Invoice invoice = toEntity(dto);
-        invoice.setCustomer(customer);
-        invoice.setNumber("INV-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-        return toDTO(repository.save(invoice));
+    public Optional<InvoiceDTO> update(Long id, InvoiceDTO dto) {
+        return invoiceRepository.findById(id)
+                .map(invoice -> {
+                    // Validar se customer existe (se foi alterado)
+                    if (!invoice.getCustomer().getId().equals(dto.getCustomerId())) {
+                        Customer customer = customerRepository.findById(dto.getCustomerId())
+                                .orElseThrow(() -> new IllegalArgumentException(
+                                    "Customer não encontrado: " + dto.getCustomerId()));
+                        invoice.setCustomer(customer);
+                    }
+
+                    invoice.setAmount(dto.getAmount());
+                    invoice.setDescription(dto.getDescription());
+                    invoice.setDueDate(dto.getDueDate());
+
+                    Invoice updated = invoiceRepository.save(invoice);
+                    return toDTO(updated);
+                });
     }
 
     @Transactional
-    public InvoiceDTO update(Long id, InvoiceDTO dto) {
-        Invoice invoice = repository.findById(id)
-                .orElseThrow(() -> new BusinessException("Invoice not found: " + id));
-        invoice.setAmount(dto.getAmount());
-        invoice.setDescription(dto.getDescription());
-        invoice.setDueDate(dto.getDueDate());
-        if (dto.getStatus() != null) {
-            invoice.setStatus(Invoice.InvoiceStatus.valueOf(dto.getStatus()));
+    public boolean delete(Long id) {
+        if (invoiceRepository.existsById(id)) {
+            invoiceRepository.deleteById(id);
+            return true;
         }
-        return toDTO(repository.save(invoice));
+        return false;
     }
 
+    /**
+     * Marcar invoice como paga
+     */
     @Transactional
-    public void delete(Long id) {
-        repository.findById(id)
-                .orElseThrow(() -> new BusinessException("Invoice not found: " + id));
-        repository.delete(id);
+    public Optional<InvoiceDTO> markAsPaid(Long id) {
+        return invoiceRepository.findById(id)
+                .map(invoice -> {
+                    invoice.markAsPaid();
+                    Invoice updated = invoiceRepository.save(invoice);
+                    return toDTO(updated);
+                });
     }
 
-    private InvoiceDTO toDTO(Invoice i) {
+    /**
+     * Marcar invoice como cancelada
+     */
+    @Transactional
+    public Optional<InvoiceDTO> markAsCancelled(Long id) {
+        return invoiceRepository.findById(id)
+                .map(invoice -> {
+                    invoice.markAsCancelled();
+                    Invoice updated = invoiceRepository.save(invoice);
+                    return toDTO(updated);
+                });
+    }
+
+    /**
+     * Buscar invoices pendentes
+     */
+    public List<InvoiceDTO> findPending() {
+        return invoiceRepository.findPending()
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Buscar invoices vencidas
+     */
+    public List<InvoiceDTO> findOverdue() {
+        return invoiceRepository.findOverdue()
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    private InvoiceDTO toDTO(Invoice invoice) {
         InvoiceDTO dto = new InvoiceDTO();
-        dto.setId(i.getId());
-        dto.setNumber(i.getNumber());
-        dto.setAmount(i.getAmount());
-        dto.setDescription(i.getDescription());
-        dto.setDueDate(i.getDueDate());
-        dto.setStatus(i.getStatus().name());
-        dto.setCustomerId(i.getCustomer().getId());
+        dto.setId(invoice.getId());
+        dto.setNumber(invoice.getNumber());
+        dto.setAmount(invoice.getAmount());
+        dto.setDescription(invoice.getDescription());
+        dto.setDueDate(invoice.getDueDate());
+        dto.setStatus(invoice.getStatus().name());
+        dto.setCustomerId(invoice.getCustomer().getId());
+        dto.setCustomerName(invoice.getCustomer().getName());
         return dto;
-    }
-
-    private Invoice toEntity(InvoiceDTO dto) {
-        Invoice i = new Invoice();
-        i.setAmount(dto.getAmount());
-        i.setDescription(dto.getDescription());
-        i.setDueDate(dto.getDueDate());
-        return i;
     }
 }

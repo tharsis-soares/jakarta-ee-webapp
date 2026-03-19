@@ -1,5 +1,6 @@
 com/tharsis/jakartaapp/dto/InvoiceDTO.class
 com/tharsis/jakartaapp/entity/Invoice.class
+com/tharsis/jakartaapp/resource/InvoiceResource$ErrorResponse.class
 com/tharsis/jakartaapp/entity/User.class
 com/tharsis/jakartaapp/service/CustomerService.class
 com/tharsis/jakartaapp/entity/Customer.class
