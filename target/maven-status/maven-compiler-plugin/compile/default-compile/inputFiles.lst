@@ -1,0 +1,15 @@
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/config/CorsFilter.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/dto/CustomerDTO.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/entity/User.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/service/InvoiceService.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/exception/ExceptionMapper.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/exception/BusinessException.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/entity/Invoice.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/repository/InvoiceRepository.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/service/CustomerService.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/config/JaxRsConfig.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/resource/CustomerResource.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/repository/CustomerRepository.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/dto/InvoiceDTO.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/resource/InvoiceResource.java
+/home/tharsis-soares/reefsys/jakarta-ee-webapp/jakarta-ee-webapp/src/main/java/com/tharsis/jakartaapp/entity/Customer.java
